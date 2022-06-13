@@ -1,0 +1,1 @@
+# easyappointments-category-monitor
