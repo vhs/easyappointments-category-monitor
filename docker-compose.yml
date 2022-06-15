@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  mask-monitor:
+    image: vanhack/easyappointments-category-monitor
+    restart: unless-stopped
+    init: true
+    volumes:
+      - ./config.json:/app/config.json:ro

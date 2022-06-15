@@ -1,0 +1,8 @@
+version: '3.7'
+
+services:
+  mask-monitor:
+    image: local/mask-monitor:latest
+    build: .
+    environment:
+      - DEBUG=app:*
