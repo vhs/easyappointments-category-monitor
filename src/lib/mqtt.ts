@@ -1,7 +1,8 @@
 import MQTT from 'async-mqtt'
 
-import { mqttServiceTopic, mqttStatusTopic, mqttUri } from 'src/lib/config'
+import { mqttOverrideTopic, mqttServiceTopic, mqttStatusTopic, mqttUri } from 'src/lib/config'
 
+import { overrideHandler } from './override'
 import { getDebugger } from './utils'
 
 const debug = getDebugger('mqtt')
@@ -23,6 +24,10 @@ client.on('connect', () => {
       client.publish(mqttServiceTopic, JSON.stringify({ status: 'online', ts: Date.now() }))
     }
   }, 5000)
+
+  client.subscribe(mqttOverrideTopic)
+
+  client.on('message', overrideHandler)
 })
 
 export const sendMQTTStatusMessage = (message: string) => {

@@ -77,6 +77,13 @@ const config = convict({
     env: 'MQTT_STATUS_TOPIC',
     arg: 'mqtt-status-topic'
   },
+  mqttOverrideTopic: {
+    doc: 'The MQTT override topic.',
+    format: String,
+    default: '/test/vhs/spacebus/status/space/mask-override',
+    env: 'MQTT_OVERRIDE_TOPIC',
+    arg: 'mqtt-override-topic'
+  },
   activeValue: {
     doc: 'The active value.',
     format: String,
@@ -109,7 +116,7 @@ config.validate({ allowed: 'strict' })
 
 if (config.get('checkInterval') < 1000) config.set('checkInterval', (config.get('checkInterval') * 1000))
 
-const dumpFields = ['env', 'baseUrl', 'apiKey', 'categoryId', 'checkInterval', 'mqttProtocol', 'mqttHost', 'mqttPort', 'mqttServiceTopic', 'mqttStatusTopic', 'activeValue', 'inactiveValue']
+const dumpFields = ['env', 'baseUrl', 'apiKey', 'categoryId', 'checkInterval', 'mqttProtocol', 'mqttHost', 'mqttPort', 'mqttOverrideTopic', 'mqttServiceTopic', 'mqttStatusTopic', 'activeValue', 'inactiveValue']
 
 dumpFields.forEach((key:any) => {
   return debug(key, '\t', config.get(key))
@@ -122,6 +129,7 @@ export const checkInterval: number = config.get('checkInterval')
 export const mqttUri: string = `${config.get('mqttProtocol')}://${config.get('mqttHost')}:${config.get('mqttPort')}`
 export const mqttServiceTopic: string = config.get('mqttServiceTopic')
 export const mqttStatusTopic: string = config.get('mqttStatusTopic')
+export const mqttOverrideTopic: string = config.get('mqttOverrideTopic')
 export const activeValue: string = config.get('activeValue')
 export const inactiveValue: string = config.get('inactiveValue')
 

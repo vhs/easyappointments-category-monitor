@@ -4,6 +4,7 @@ import { checkInterval, activeValue, inactiveValue } from 'src/lib/config'
 
 import { checkCurrentStatus } from 'src/lib/easyappointments'
 import { sendMQTTStatusMessage } from 'src/lib/mqtt'
+import { getOverrideStatus } from './lib/override'
 
 const debug = getDebugger('main')
 
@@ -14,8 +15,9 @@ const doMain = async () => {
 
   try {
     const active = await checkCurrentStatus()
+    const override = getOverrideStatus()
 
-    if (active) {
+    if (override || active) {
       debug('Status is active')
     } else {
       debug('Status is not active')
@@ -23,7 +25,7 @@ const doMain = async () => {
 
     debug('Sending message')
 
-    sendMQTTStatusMessage(active ? activeValue : inactiveValue)
+    sendMQTTStatusMessage((override || active) ? activeValue : inactiveValue)
 
     setTimeout(doMain, checkInterval)
   } catch (e: any) {
