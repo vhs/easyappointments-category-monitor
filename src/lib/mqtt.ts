@@ -1,6 +1,6 @@
 import MQTT from 'async-mqtt'
 
-import { mqttTopic, mqttUri } from 'src/lib/config'
+import { mqttServiceTopic, mqttStatusTopic, mqttUri } from 'src/lib/config'
 
 import { getDebugger } from './utils'
 
@@ -20,18 +20,18 @@ client.on('connect', () => {
   setInterval(() => {
     if (connected) {
       debug('Sending status message')
-      client.publish('/test/vhs/status/space/mask', '' + Date.now())
+      client.publish(mqttServiceTopic, JSON.stringify({ status: 'online', ts: Date.now() }))
     }
   }, 5000)
 })
 
-export const sendMQTTMessage = (message: string) => {
+export const sendMQTTStatusMessage = (message: string) => {
   if (!connected) {
     messageDebug('Not connected')
     return false
   }
 
-  messageDebug('Sending message', mqttTopic, '->', message)
+  messageDebug('Sending message', mqttStatusTopic, '->', message)
 
-  client.publish(mqttTopic, message)
+  client.publish(mqttStatusTopic, message)
 }

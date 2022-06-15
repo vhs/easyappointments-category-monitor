@@ -3,7 +3,7 @@ import { getDebugger } from './lib/utils'
 import { checkInterval, activeValue, inactiveValue } from 'src/lib/config'
 
 import { checkCurrentStatus } from 'src/lib/easyappointments'
-import { sendMQTTMessage } from 'src/lib/mqtt'
+import { sendMQTTStatusMessage } from 'src/lib/mqtt'
 
 const debug = getDebugger('main')
 
@@ -23,7 +23,7 @@ const doMain = async () => {
 
     debug('Sending message')
 
-    sendMQTTMessage(active ? activeValue : inactiveValue)
+    sendMQTTStatusMessage(active ? activeValue : inactiveValue)
 
     setTimeout(doMain, checkInterval)
   } catch (e: any) {

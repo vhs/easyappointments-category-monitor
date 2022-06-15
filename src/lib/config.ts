@@ -43,14 +43,14 @@ const config = convict({
     arg: 'check-interval'
   },
   mqttProtocol: {
-    doc: 'The MQTT uri.',
+    doc: 'The MQTT protocol.',
     format: String,
     default: 'tcp',
     env: 'MQTT_PROTOCOL',
     arg: 'mqtt-protocol'
   },
   mqttHost: {
-    doc: 'The MQTT uri.',
+    doc: 'The MQTT host.',
     format: String,
     default: 'test.mosquitto.org',
     env: 'MQTT_HOST',
@@ -63,12 +63,19 @@ const config = convict({
     env: 'MQTT_PORT',
     arg: 'mqtt-port'
   },
-  mqttTopic: {
-    doc: 'The MQTT uri.',
+  mqttServiceTopic: {
+    doc: 'The MQTT service topic.',
+    format: String,
+    default: '/test/vhs/spacebus/status/services/easyappointments-mask-schedule-monitor',
+    env: 'MQTT_SERVICE_TOPIC',
+    arg: 'mqtt-service-topic'
+  },
+  mqttStatusTopic: {
+    doc: 'The MQTT status topic.',
     format: String,
     default: '/test/vhs/spacebus/status/space/mask',
-    env: 'MQTT_TOPIC',
-    arg: 'mqtt-topic'
+    env: 'MQTT_STATUS_TOPIC',
+    arg: 'mqtt-status-topic'
   },
   activeValue: {
     doc: 'The active value.',
@@ -102,7 +109,7 @@ config.validate({ allowed: 'strict' })
 
 if (config.get('checkInterval') < 1000) config.set('checkInterval', (config.get('checkInterval') * 1000))
 
-const dumpFields = ['env', 'baseUrl', 'apiKey', 'categoryId', 'checkInterval', 'mqttProtocol', 'mqttHost', 'mqttPort', 'mqttTopic', 'activeValue', 'inactiveValue']
+const dumpFields = ['env', 'baseUrl', 'apiKey', 'categoryId', 'checkInterval', 'mqttProtocol', 'mqttHost', 'mqttPort', 'mqttServiceTopic', 'mqttStatusTopic', 'activeValue', 'inactiveValue']
 
 dumpFields.forEach((key:any) => {
   return debug(key, '\t', config.get(key))
@@ -113,7 +120,8 @@ export const apiKey: string = config.get('apiKey')
 export const categoryId: number = config.get('categoryId')
 export const checkInterval: number = config.get('checkInterval')
 export const mqttUri: string = `${config.get('mqttProtocol')}://${config.get('mqttHost')}:${config.get('mqttPort')}`
-export const mqttTopic: string = config.get('mqttTopic')
+export const mqttServiceTopic: string = config.get('mqttServiceTopic')
+export const mqttStatusTopic: string = config.get('mqttStatusTopic')
 export const activeValue: string = config.get('activeValue')
 export const inactiveValue: string = config.get('inactiveValue')
 
