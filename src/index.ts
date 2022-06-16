@@ -15,6 +15,7 @@ const doMain = async () => {
 
   try {
     const active = await checkCurrentStatus()
+
     const override = getOverrideStatus()
 
     if (override || active) {
@@ -23,11 +24,7 @@ const doMain = async () => {
       debug('Status is not active')
     }
 
-    debug('Sending message')
-
     sendMQTTStatusMessage((override || active) ? activeValue : inactiveValue)
-
-    setTimeout(doMain, checkInterval)
   } catch (e: any) {
     if (e.response !== undefined && e.response.data !== undefined) {
       console.error(e.response.data)
@@ -38,5 +35,7 @@ const doMain = async () => {
 }
 
 debug('Starting main loop')
+
+setInterval(doMain, checkInterval)
 
 doMain()
