@@ -18,13 +18,11 @@ const doMain = async () => {
 
     const override = getOverrideStatus()
 
-    if (override || active) {
-      debug('Status is active')
-    } else {
-      debug('Status is not active')
-    }
+    const status = override || active
 
-    sendMQTTStatusMessage((override || active) ? activeValue : inactiveValue)
+    debug(status ? 'Status is active' : 'Status is not active')
+
+    sendMQTTStatusMessage(status ? activeValue : inactiveValue)
   } catch (e: any) {
     if (e.response !== undefined && e.response.data !== undefined) {
       console.error(e.response.data)
