@@ -1,0 +1,7 @@
+{
+    "baseUrl": "https://BOOKINGURL/index.php/api/v1",
+    "apiKey": "REPLACEME",
+    "categoryId": 1,
+    "activeValue": "ACTIVE",
+    "inactiveValue": "INACTIVE"
+}
