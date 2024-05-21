@@ -7,18 +7,23 @@ const debug = getDebugger('override')
 let overrideStatus = false
 let lastOverrideStatus = overrideStatus
 
-export const overrideHandler = (topic: string, payload: Buffer) => {
-  if (topic === mqttOverrideTopic) {
-    const content = payload.toString()
+export const overrideHandler = async (
+    topic: string,
+    payload: Buffer
+): Promise<void> => {
+    if (topic === mqttOverrideTopic) {
+        const content = payload.toString()
 
-    overrideStatus = (content === 'on')
+        overrideStatus = content === 'on'
 
-    if (overrideStatus !== lastOverrideStatus) {
-      debug('Override enabled. Pushing new status:', activeValue)
-      sendMQTTStatusMessage(overrideStatus ? activeValue : inactiveValue)
-      lastOverrideStatus = overrideStatus
+        if (overrideStatus !== lastOverrideStatus) {
+            debug('Override enabled. Pushing new status:', activeValue)
+            await sendMQTTStatusMessage(
+                overrideStatus ? activeValue : inactiveValue
+            )
+            lastOverrideStatus = overrideStatus
+        }
     }
-  }
 }
 
-export const getOverrideStatus = () => overrideStatus
+export const getOverrideStatus = (): boolean => overrideStatus

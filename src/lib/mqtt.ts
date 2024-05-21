@@ -1,6 +1,11 @@
 import MQTT from 'async-mqtt'
 
-import { mqttOverrideTopic, mqttServiceTopic, mqttStatusTopic, mqttUri } from 'src/lib/config'
+import {
+    mqttOverrideTopic,
+    mqttServiceTopic,
+    mqttStatusTopic,
+    mqttUri
+} from './config'
 
 import { overrideHandler } from './override'
 import { getDebugger } from './utils'
@@ -14,29 +19,38 @@ const client = MQTT.connect(mqttUri)
 
 let connected = false
 
+const clientOnHandler = async (): Promise<void> => {
+    debug('Connected')
+    connected = true
+
+    setInterval(() => {
+        if (connected) {
+            debug('Sending status message')
+            void client.publish(
+                mqttServiceTopic,
+                JSON.stringify({ status: 'online', ts: Date.now() })
+            )
+        }
+    }, 5000)
+
+    await client.subscribe(mqttOverrideTopic)
+
+    client.on('message', (topic: string, payload: Buffer) => {
+        void overrideHandler(topic, payload)
+    })
+}
+
 client.on('connect', () => {
-  debug('Connected')
-  connected = true
-
-  setInterval(() => {
-    if (connected) {
-      debug('Sending status message')
-      client.publish(mqttServiceTopic, JSON.stringify({ status: 'online', ts: Date.now() }))
-    }
-  }, 5000)
-
-  client.subscribe(mqttOverrideTopic)
-
-  client.on('message', overrideHandler)
+    void clientOnHandler()
 })
 
-export const sendMQTTStatusMessage = (message: string) => {
-  if (!connected) {
-    messageDebug('Not connected')
-    return false
-  }
+export const sendMQTTStatusMessage = async (message: string): Promise<void> => {
+    if (!connected) {
+        messageDebug('Not connected')
+        return
+    }
 
-  messageDebug('Sending message', mqttStatusTopic, '->', message)
+    messageDebug('Sending message', mqttStatusTopic, '->', message)
 
-  client.publish(mqttStatusTopic, message)
+    await client.publish(mqttStatusTopic, message)
 }

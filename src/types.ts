@@ -1,6 +1,6 @@
-import convict from 'convict/index'
+import type convict from 'convict/index'
 
-export interface AppConfig extends convict.Config<any> {
+export interface AppConfig extends convict.Config<unknown> {
     baseUrl: string
     apiKey: string
     categoryId: number
@@ -39,5 +39,5 @@ export interface EasyAppointmentsAppointment {
     customerId: number
     providerId: number
     serviceId: number
-    googleCalendarId: any
-  }
+    googleCalendarId: unknown
+}
