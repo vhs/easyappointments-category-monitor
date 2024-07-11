@@ -6,7 +6,8 @@ const debug = getDebugger('network')
 const baseRequest = {
     headers: {
         Authorization: `Bearer ${apiKey}`,
-        'content-type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Accept-Language': 'en'
     }
 }
 
@@ -21,22 +22,22 @@ export async function doRequest<T = unknown[]>(
 
     debug('Doing request', endpoint, method, params)
 
-    const urlParts = [`${baseUrl}/${endpoint}`]
+    const url = new URL(`${baseUrl}/${endpoint}`)
 
-    const requestOptions: RequestInit = {
+    const requestInit: RequestInit = {
         ...baseRequest,
         method
     }
 
     if (Object.keys(params).length > 0) {
         if (method === 'GET') {
-            const queryString = new URLSearchParams(params)
-
-            urlParts.push(queryString.toString())
+            Object.entries(params).forEach(([k, v]) =>
+                url.searchParams.set(k, v)
+            )
         } else {
-            requestOptions.body = JSON.stringify(params)
+            requestInit.body = JSON.stringify(params)
         }
     }
 
-    return await (await fetch(urlParts.join('?'), requestOptions)).json()
+    return await (await fetch(url, requestInit)).json()
 }
