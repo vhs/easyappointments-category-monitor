@@ -28,8 +28,8 @@ const doMain = async (): Promise<void> => {
     }
 }
 
-debug('Starting main loop')
+debug(`Starting main loop (every ${checkInterval})`)
 
-setInterval(() => doMain, checkInterval)
+setInterval(() => doMain(), checkInterval)
 
 void doMain()
